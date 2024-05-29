@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QApplication, QDesktopWidget, QWidget, QListWidgetIt
 from PyQt5 import uic
 from GroupListPage import *
 from UserListPage import *
+from LoginWindow import *
 
 class Origin(QWidget):
     def __init__(self, main_window):
@@ -22,6 +23,6 @@ class Origin(QWidget):
         self.main_window.statusBar().showMessage('User List Page')
 
     def open_group_list_page(self):
-        self.group_list_page = GroupListPage(self.main_window)
+        self.group_list_page = GroupListWindow(self.main_window, username=self.main_window.username)
         self.main_window.setCentralWidget(self.group_list_page)
         self.main_window.statusBar().showMessage('Group List Page')

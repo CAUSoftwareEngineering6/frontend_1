@@ -15,7 +15,7 @@ class GroupListPage(QWidget):
         for group in self.groups:
             item = QListWidgetItem(group)
             self.groupListWidget.addItem(item)
-        
+
         self.groupListWidget.itemClicked.connect(self.open_detail_page)
 
         # 여백 주기
