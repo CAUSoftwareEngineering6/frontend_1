@@ -87,7 +87,7 @@ class GroupListPage(QWidget):
                 group_box.hide()
 
     def visit_group(self, group):
-        self.group_select_window = GroupSelectWindow(group, self.main_window)
+        self.group_select_window = GroupSelectPage(group, self.main_window)
         self.main_window.setCentralWidget(self.group_select_window)
         self.main_window.statusBar().showMessage(group['name'] + ' Select Page')
 
