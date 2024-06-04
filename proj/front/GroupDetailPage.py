@@ -1,196 +1,12 @@
-import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QMessageBox, \
-    QHBoxLayout, QGroupBox, QTextEdit, QListWidget, QListWidgetItem, QInputDialog, QScrollArea
+from PyQt5.QtWidgets import QInputDialog, QHBoxLayout, QListWidgetItem, QMessageBox, QLineEdit, QListWidget, QScrollArea, QTextEdit, QApplication, QDesktopWidget, QWidget, QLabel, QPushButton, QVBoxLayout, QSpacerItem, QSizePolicy
 
-
-class LoginWindow(QWidget):
-    def __init__(self, main_window):
-        super().__init__()
-        self.main_window = main_window
-        self.initUI()
-
-    def initUI(self):
-        self.setWindowTitle('Login Page')
-        self.setGeometry(100, 100, 300, 150)
-
-        layout = QVBoxLayout()
-
-        self.username_label = QLabel('Username')
-        layout.addWidget(self.username_label)
-
-        self.username_input = QLineEdit()
-        layout.addWidget(self.username_input)
-
-        self.password_label = QLabel('Password')
-        layout.addWidget(self.password_label)
-
-        self.password_input = QLineEdit()
-        self.password_input.setEchoMode(QLineEdit.Password)
-        layout.addWidget(self.password_input)
-
-        self.login_button = QPushButton('Login')
-        self.login_button.clicked.connect(self.check_credentials)
-        layout.addWidget(self.login_button)
-
-        self.setLayout(layout)
-
-    def check_credentials(self):
-        username = self.username_input.text()
-        password = self.password_input.text()
-
-        if username in ['Alice', 'Bob', 'Heidi'] and password == 'pass':
-            self.login_successful(username)
-        else:
-            QMessageBox.warning(self, 'Error', 'Invalid Username or Password')
-
-    def login_successful(self, username):
-        self.group_list_window = GroupListWindow(username, self)
-        self.group_list_window.show()
-        self.close()
-
-
-class GroupListWindow(QWidget):
-    def __init__(self, username, parent):
-        super().__init__()
-        self.username = username
-        self.parent = parent
-        self.initUI()
-
-    def initUI(self):
-        self.setWindowTitle('Group List')
-        self.setGeometry(100, 100, 400, 500)
-
-        self.layout = QVBoxLayout()
-
-        self.search_box = QLineEdit(self)
-        self.search_box.setPlaceholderText("그룹 또는 사용자 검색")
-        self.search_box.textChanged.connect(self.filter_groups)
-        self.layout.addWidget(self.search_box)
-
-        self.groups = [
-            {'name': '팀1 팀 프로젝트', 'students': 7,
-             'members': ['Alice', 'Bob', 'Charlie', 'David', 'Eve', 'Frank', 'Grace']},
-            {'name': '팀2 팀 프로젝트 방문', 'students': 8,
-             'members': ['Heidi', 'Ivan', 'Judy', 'Mallory', 'Niaj', 'Oscar', 'Peggy', 'Sybil']},
-            {'name': '팀3 팀 프로젝트', 'students': 7,
-             'members': ['Trent', 'Victor', 'Walter', 'Xander', 'Yves', 'Zara', 'Amy']},
-            {'name': '팀4 팀 프로젝트', 'students': 7,
-             'members': ['Brian', 'Clara', 'Diana', 'Edward', 'Fiona', 'George', 'Hannah']}
-        ]
-
-        self.group_boxes = []
-        for group in self.groups:
-            group_box = self.create_group_box(group)
-            self.group_boxes.append(group_box)
-            self.layout.addWidget(group_box)
-
-        # 뒤로가기 버튼
-        self.back_button = QPushButton('로그인 페이지로 돌아가기')
-        self.back_button.clicked.connect(self.go_back)
-        self.layout.addWidget(self.back_button)
-
-        self.setLayout(self.layout)
-
-    def create_group_box(self, group):
-        group_box = QGroupBox(group['name'])
-        group_layout = QVBoxLayout()
-
-        info_layout = QHBoxLayout()
-        label = QLabel(f"학생 {group['students']} 명")
-        info_layout.addWidget(label)
-
-        if self.username in group['members']:
-            visit_button = QPushButton('방문')
-            visit_button.clicked.connect(lambda _, g=group: self.visit_group(g))
-            info_layout.addWidget(visit_button)
-        else:
-            lock_button = QPushButton()
-            lock_button.setText('🔒')
-            lock_button.clicked.connect(lambda _, g=group, gb=group_box: self.toggle_members(g, gb))
-            info_layout.addWidget(lock_button)
-
-        group_layout.addLayout(info_layout)
-
-        members_label = QLabel("\n".join(group['members']))
-        members_label.setVisible(False)
-        group_layout.addWidget(members_label)
-
-        group_box.setLayout(group_layout)
-        group_box.members_label = members_label
-        return group_box
-
-    def toggle_members(self, group, group_box):
-        members_label = group_box.members_label
-        members_label.setVisible(members_label.isVisible() == 0)
-
-    def filter_groups(self):
-        search_text = self.search_box.text().lower()
-        for i, group in enumerate(self.groups):
-            group_box = self.group_boxes[i]
-            if search_text in group['name'].lower():
-                group_box.show()
-            else:
-                group_box.hide()
-
-    def visit_group(self, group):
-        self.group_select_window = GroupSelectWindow(group, self)
-        self.group_select_window.show()
-        self.close()
-
-    def go_back(self):
-        self.parent.show()
-        self.close()
-
-
-class GroupSelectWindow(QWidget):
-    def __init__(self, group, parent):
-        super().__init__()
-        self.group = group
-        self.parent = parent
-        self.initUI()
-
-    def initUI(self):
-        self.setWindowTitle(self.group['name'])
-        self.setGeometry(100, 100, 300, 150)
-
-        layout = QVBoxLayout()
-
-        notice_button = QPushButton('공지 페이지')
-        notice_button.clicked.connect(self.go_to_notice)
-        layout.addWidget(notice_button)
-
-        discussion_button = QPushButton('토론 페이지')
-        discussion_button.clicked.connect(self.go_to_discussion)
-        layout.addWidget(discussion_button)
-
-        back_button = QPushButton('뒤로가기')
-        back_button.clicked.connect(self.go_back)
-        layout.addWidget(back_button)
-
-        self.setLayout(layout)
-
-    def go_to_notice(self):
-        self.notice_window = GroupDetailWindow(self.group, self, 'notice')
-        self.notice_window.show()
-        self.close()
-
-    def go_to_discussion(self):
-        self.discussion_window = GroupDetailWindow(self.group, self, 'discussion')
-        self.discussion_window.show()
-        self.close()
-
-    def go_back(self):
-        self.parent.show()
-        self.close()
-
-
-class GroupDetailWindow(QWidget):
+class GroupDetailPage(QWidget):
     saved_data = {}  # 그룹별 저장된 공지 및 토론 데이터
 
-    def __init__(self, group, parent, view):
+    def __init__(self, group, main_window, view):
         super().__init__()
         self.group = group
-        self.parent = parent
+        self.main_window = main_window
         self.view = view
         self.initUI()
 
@@ -222,8 +38,8 @@ class GroupDetailWindow(QWidget):
         self.setLayout(main_layout)
 
         # 저장된 데이터 로드
-        if self.group['name'] in GroupDetailWindow.saved_data:
-            saved_notices, saved_discussions = GroupDetailWindow.saved_data[self.group['name']]
+        if self.group['name'] in GroupDetailPage.saved_data:
+            saved_notices, saved_discussions = GroupDetailPage.saved_data[self.group['name']]
             if self.view == 'notice':
                 for notice in saved_notices:
                     self.add_notice_item(notice)
@@ -264,8 +80,8 @@ class GroupDetailWindow(QWidget):
         self.layout.addWidget(self.discussion_list)
 
     def go_back(self):
-        self.parent.show()
-        self.close()
+        self.main_window.go_back_to_select_page(self.group)
+
 
     def add_notice(self):
         notice_text = self.notice_input.toPlainText()
@@ -408,10 +224,3 @@ class GroupDetailWindow(QWidget):
     def get_list_item_text(self, item):
         label = self.notice_list.itemWidget(item).layout().itemAt(0).widget()
         return label.text().split('. ', 1)[1]
-
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    login_window = LoginWindow()
-    login_window.show()
-    sys.exit(app.exec_())
