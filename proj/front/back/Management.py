@@ -215,7 +215,7 @@ class Management:
         group = self.database.search_group(group_id)
         announcement = group.search_announcement(post_id)
         if group and announcement:
-            announcement.update_postname(postname, content)
+            announcement.update_content(postname, content)
             return True
         return False
 
