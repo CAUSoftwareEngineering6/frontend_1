@@ -14,6 +14,7 @@ class MainWindow(QMainWindow):
         # self.user_id, self.user_name -> login() 뒤에 저장됨
         self.user_id = '20192115'
         self.username = 'Alice'
+        self.group_id = '1'
         # Management : back과의 의사소통
         self.manager = Management()
         #########################################
@@ -76,18 +77,18 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage('User List Page')
 
     def go_back_to_group_list(self):
-        self.group_list_page = GroupListPage(self, self.username)
+        self.group_list_page = GroupListPage(self, self.username, self.group_id)
         self.setGeometry(100, 100, 400, 500)
         self.center()
         self.setCentralWidget(self.group_list_page)
         self.statusBar().showMessage('Group List Page')
 
     def go_back_to_select_page(self, group):
-        self.group_select_page = GroupSelectPage(group, self)
+        self.group_select_page = GroupSelectPage(group, self, self.group_id, self.username)
         self.setGeometry(100, 100, 400, 500)
         self.center()
         self.setCentralWidget(self.group_select_page)
-        self.statusBar().showMessage(group['name'] + ' Select Page')
+        #self.statusBar().showMessage(group['name'] + ' Select Page')
 
     #-----------데이터 읽어오는 함수------------#
     def get_all_user(self, option=None):
@@ -102,7 +103,18 @@ class MainWindow(QMainWindow):
         all_group = self.manager.show_group(self.user_id, option)
         print(all_group)
         return all_group
-    
+
+
+    def get_all_announcement(self):
+        all_announcement = self.manager.show_announcement(self.group_id)
+        print(all_announcement)
+        return all_announcement
+
+    def get_all_debate(self):
+        all_debate = self.manager.show_debate(self.group_id)
+        print(all_debate)
+        return all_debate
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
