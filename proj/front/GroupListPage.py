@@ -1,12 +1,15 @@
-from PyQt5.QtWidgets import QApplication, QDesktopWidget, QWidget, QListWidget, QListWidgetItem, QVBoxLayout, QSpacerItem, QSizePolicy, QPushButton
+from PyQt5.QtWidgets import QApplication, QDesktopWidget, QWidget, QListWidget, QListWidgetItem, QVBoxLayout, \
+    QSpacerItem, QSizePolicy, QPushButton
 from GroupDetailPage import GroupDetailPage
 from LoginWindow import *
 from GroupSelectPage import *
 
+
 class GroupListPage(QWidget):
-    def __init__(self, main_window, username):
+    def __init__(self, main_window, username, group_id):
         super().__init__()
         self.username = username
+        self.group_id = group_id
         self.main_window = main_window
         self.initUI()
 
@@ -80,10 +83,9 @@ class GroupListPage(QWidget):
                 group_box.hide()
 
     def visit_group(self, group):
-        self.group_select_window = GroupSelectPage(group, self.main_window)
+        self.group_select_window = GroupSelectPage(group, self.main_window, self.group_id, self.username)
         self.main_window.setCentralWidget(self.group_select_window)
         self.main_window.statusBar().showMessage(group['group_name'] + ' Select Page')
 
     def go_back(self):
         self.main_window.go_back_to_origin()
-        
