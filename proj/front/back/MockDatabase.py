@@ -34,10 +34,10 @@ class MockDatabase:
         announcement1 = Announcement(user1, "1차 공지입니다", "1차 공지 내용입니다")
         announcement2 = Announcement(user2, "2차 공지입니다", "2차 공지 내용입니다")
 
-        comment1 = Comment(user1, "토론 댓글")
-        comment2 = Comment(user2, "공지 댓글")
-        debate1.comments.append(comment1)
-        announcement1.comments.append(comment2)
+        #comment1 = Comment(user1, "토론 댓글")
+        #comment2 = Comment(user2, "공지 댓글")
+        #debate1.comments.append(comment1)
+        #announcement1.comments.append(comment2)
 
         # Creating mock groups
         group1 = Group("1", "Group1")
@@ -46,6 +46,7 @@ class MockDatabase:
         group1.add_debate(debate1)
         group1.add_debate(debate2)
         group1.add_announcement(announcement1)
+        group1.add_announcement(announcement2)
 
 
         group2 = Group("2", "Group2")
