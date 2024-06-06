@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QLineEdit, QApplication, QDesktopWidget, QWidget, QListWidget, QListWidgetItem, QVBoxLayout, \
+from PyQt5.QtWidgets import QMessageBox, QLineEdit, QApplication, QDesktopWidget, QWidget, QListWidget, QListWidgetItem, QVBoxLayout, \
     QHBoxLayout, QSpacerItem, QSizePolicy, QPushButton, QTableWidget, QTableWidgetItem
 from PyQt5.QtCore import Qt
 from UserDetailPage import UserDetailPage
@@ -96,10 +96,17 @@ class UserListPage(QWidget):
 
     def delete_user(self, row):
         student_id = self.userListWidget.item(row, 1).text()
-        self.main_window.delete_user(student_id)
-        print(f"delete user with student ID: {student_id}")
-        # 삭제 완료 문구 알림창 뜨고 -> 알림창 확인 클릭시 show()호출
-        self.show()
+
+        # Display confirmation dialog
+        reply = QMessageBox.question(self, 'Confirmation', '삭제하시겠습니까?', QMessageBox.Yes | QMessageBox.No,QMessageBox.No)
+
+        # If confirmed, delete the user
+        if reply == QMessageBox.Yes:
+            self.main_window.delete_user(student_id)
+            print(f"delete user with student ID: {student_id}")
+            # Show completion message and update the view
+            QMessageBox.information(self, 'Deleted', '유저가 삭제되었습니다.')
+            self.show()
 
 
     def open_user_creat_page(self):
