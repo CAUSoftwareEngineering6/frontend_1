@@ -1,9 +1,10 @@
 from .User import User
-from .Debate import Debate
-from .Group import Group
+from .Debate import Debate 
+from .Group import Group 
 from .Announcement import Announcement
 from .Comment import Comment
-from .StudentAndProfessor import *
+from .Score import Score
+from .StudentAndProfessor import Student, Professor
 import datetime
 
 
@@ -16,15 +17,17 @@ class MockDatabase:
         score = Score("출석", "중간", "기말", "과제", "등수")
         
         user1 = Student("1", "Alice", "pass", "alice@example.com", "female", "20192115", "성적1", score)
-        user2 = Student("2", "user2", "password2", "user2@example.com", "female","학번2", "성적3", score)
+        user2 = Student("2", "user2", "password2", "user2@example.com", "female","학번2", "성적2", score)
         user3 = Student("3", "user3", "password3", "user3@example.com", "male", "학번3", "성적3", score)
-        return [user1, user2, user3]
+        user4 = Professor("pro", "김기락", "pass", "pro@example.com", "male", "123123123", rand="3")
+        return [user1, user2, user3, user4]
 
     def _create_mock_groups(self):
         # Creating mock users
         user1 = self.users[0]
         user2 = self.users[1]
         user3 = self.users[2]
+        user4 = self.users[3]
 
         # Creating mock debates
         debate1 = Debate(user1, "역사란 무엇인가")
@@ -34,28 +37,33 @@ class MockDatabase:
         announcement1 = Announcement(user1, "1차 공지입니다", "1차 공지 내용입니다")
         announcement2 = Announcement(user2, "2차 공지입니다", "2차 공지 내용입니다")
 
-        comment1 = Comment(user1, "토론 댓글")
-        comment2 = Comment(user2, "공지 댓글")
-        debate1.comments.append(comment1)
-        announcement1.comments.append(comment2)
+        # 기존 댓글 데이터를 넣지 않아야 작동합니다..... 제출 때 해당 주석 지우기!
+        # comment1 = Comment(user1, "토론 댓글")
+        # comment2 = Comment(user2, "공지 댓글")
+        # debate1.comments.append(comment1)
+        # announcement1.comments.append(comment2)
 
         # Creating mock groups
         group1 = Group("1", "Group1")
         group1.add_member(user1)
         group1.add_member(user2)
+        group1.add_member(user4)
         group1.add_debate(debate1)
         group1.add_debate(debate2)
         group1.add_announcement(announcement1)
+        group1.add_announcement(announcement2)
 
 
         group2 = Group("2", "Group2")
         group2.add_member(user3)
+        group2.add_member(user4)
         group2.add_debate(debate2)
         group2.add_announcement(announcement2)
 
         group3 = Group("3", "Group3")
         group3.add_member(user2)
         group3.add_member(user3)
+        group3.add_member(user4)
 
         return [group1, group2, group3]
 
@@ -67,6 +75,7 @@ class MockDatabase:
 
     def search_group(self, group_id):
         for group in self.groups:
+            print("A: ", group.group_id,"input :", group_id)
             if group.group_id == group_id:
                 return group
         return False

@@ -38,12 +38,13 @@ class LoginWindow(QWidget):
         username = self.username_input.text()
         password = self.password_input.text()
 
-        if username in ['Alice', 'Bob', 'Heidi'] and password == 'pass':
-            self.login_successful(username)
+        if username in ['Alice', 'Bob', 'Heidi', '김기락'] and password == 'pass':
+            self.login_successful()
         else:
             QMessageBox.warning(self, 'Error', 'Invalid Username or Password')
 
-    def login_successful(self, username):
+    def login_successful(self):
+        self.main_window.set_login_user(self.username_input.text())
         self.main_window.go_back_to_origin()
 
 

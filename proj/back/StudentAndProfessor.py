@@ -1,8 +1,6 @@
-from .User import *
-from .Score import *
-from .Post import *
+from .User import User
+from .Score import Score 
 from typing import List
-from .Management import *
 
 class Student(User):
     def __init__(self,user_id: str, username: str, password: str, email: str, gender: str, student_id: int, grade: str, score: Score):
@@ -40,6 +38,12 @@ class Student(User):
             }
         return detail
 
+    def get_id(self):
+        return self.student_id
+    
+    def get_type(self):
+        return "Student"
+
 class Professor(User):
     def __init__(self, user_id: str, username: str, password: str, email: str, gender: str, professor_id: int, rand: str):
         super().__init__(user_id, username, password, email, gender)
@@ -53,7 +57,12 @@ class Professor(User):
             "rand": self.rand
         })
         return base_dict
+    
+    def get_id(self):
+        return self.professor_id
 
+    def get_type(self):
+        return "Professor"    
     # 이 부분도 정확히 이해가 안되서 우선 제 방식대로 바꾸고 나중에 만나서 이야기해보면 좋을거같아요!
     # def create_user(self, user: User, management: management):
     #     return management.create_user(user)

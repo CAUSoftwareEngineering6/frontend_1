@@ -1,4 +1,4 @@
-from .Management import *
+from .Management import Management
 
 
 M = Management()
@@ -12,11 +12,11 @@ print('\nshow_user 이름 검색 테스트')
 print(M.show_user("user2"))
 
 print('\ncreate_user 테스트')
-M.create_user("4", "user4", "1234", "user4@cau.ac.kr", "female")
+M.create_user("5", "user4", "1234", "user4@cau.ac.kr", "female")
 print(M.show_user())
 
 print('\ndelete_user 테스트')
-M.delete_user("4")
+M.delete_user("5")
 print(M.show_user())
 
 print('\nshow_user_detail 테스트: 1 자기 자신 2 다른 사람')

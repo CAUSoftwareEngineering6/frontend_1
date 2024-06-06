@@ -37,7 +37,7 @@ class Origin(QWidget):
         self.main_window.statusBar().showMessage('User List Page')
 
     def open_group_list_page(self):
-        self.group_list_page = GroupListPage(self.main_window, username=self.main_window.username)
+        self.group_list_page = GroupListPage(self.main_window, username=self.main_window.username, group_id=self.main_window.group_id)
         self.main_window.setCentralWidget(self.group_list_page)
         self.main_window.statusBar().showMessage('Group List Page')
 

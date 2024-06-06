@@ -1,6 +1,8 @@
-from PyQt5.QtWidgets import QLineEdit, QApplication, QDesktopWidget, QWidget, QListWidget, QListWidgetItem, QVBoxLayout, QSpacerItem, QSizePolicy, QPushButton, QTableWidget, QTableWidgetItem
+from PyQt5.QtWidgets import QLineEdit, QApplication, QDesktopWidget, QWidget, QListWidget, QListWidgetItem, QVBoxLayout, \
+    QHBoxLayout, QSpacerItem, QSizePolicy, QPushButton, QTableWidget, QTableWidgetItem
 from PyQt5.QtCore import Qt
 from UserDetailPage import UserDetailPage
+from UserCreatePage import UserCreatePage
 
 
 class UserListPage(QWidget):
@@ -12,15 +14,25 @@ class UserListPage(QWidget):
     def initUI(self):
         layout = QVBoxLayout()
 
+        # 검색 상자와 + 버튼을 위한 레이아웃
+        search_layout = QHBoxLayout()
         self.search_box = QLineEdit(self)
         self.search_box.setPlaceholderText("사용자 검색")
-        # 검색이 시작되면 화면 새로 로딩!
+        # 검색이 시작되면 화면 새로 로딩
         self.search_box.textChanged.connect(self.show)
-        layout.addWidget(self.search_box)
+        search_layout.addWidget(self.search_box)
+
+        # + 버튼 추가
+        self.add_button = QPushButton("+", self)
+        self.add_button.setFixedSize(30, 30)
+        self.add_button.clicked.connect(self.open_user_creat_page)
+        search_layout.addWidget(self.add_button)
+
+        layout.addLayout(search_layout)
 
         # UserList 를 TableWidget으로 표현
         self.userListWidget = QTableWidget(self)
-        self.userListWidget.setColumnCount(2)
+        self.userListWidget.setColumnCount(3)
         layout.addWidget(self.userListWidget)
 
         self.show()
@@ -40,10 +52,8 @@ class UserListPage(QWidget):
         search_text = self.search_box.text().lower()
         for item in self.user_items:
             item.setHidden(search_text not in item.text().lower())
-    
 
     def open_detail_page(self):
-
         # 로직 : 우선 클릭된 셀의 행 값 추출 -> 해당 행의 2번째 값(index=1)의 text추출(학번값) -> 해당 값을 디테일 페이지에 인수로 넘김
         student_id = self.userListWidget.item(self.userListWidget.currentRow(), 1).text()
         self.detail_page = UserDetailPage(self.main_window, student_id)
@@ -53,16 +63,16 @@ class UserListPage(QWidget):
     def go_back(self):
         self.main_window.go_back_to_origin()
 
-    #--------- data 및 출력 관련부 ----------#
+    # --------- data 및 출력 관련부 ----------#
     def get_users(self):
-        return self.main_window.get_all_user(self.search_box.text() if self.search_box.text()!= '' else None)
+        return self.main_window.get_all_user(self.search_box.text() if self.search_box.text() != '' else None)
 
     def show(self):
         # 기존 테이블 지우기
         self.userListWidget.clear()
 
         # 테이블 열 이름 지정
-        self.userListWidget.setHorizontalHeaderLabels(["name", "studentID"])
+        self.userListWidget.setHorizontalHeaderLabels(["name", "studentID", "delete"])
 
         # 테이블 칸 너비 조절
         self.userListWidget.horizontalHeader().setStretchLastSection(True)
@@ -74,10 +84,25 @@ class UserListPage(QWidget):
         self.userListWidget.setRowCount(len(users))
 
         # 테이블에 각 데이터 넣기
-        i = 0
-        for user in users:
+        for i, user in enumerate(users):
             name = QTableWidgetItem(user['username'])
             student_id = QTableWidgetItem(user['student_id'])
-            self.userListWidget.setItem(i,0,name)
-            self.userListWidget.setItem(i,1,student_id)
-            i += 1
+            self.userListWidget.setItem(i, 0, name)
+            self.userListWidget.setItem(i, 1, student_id)
+
+            delete_button = QPushButton("DELETE")
+            delete_button.clicked.connect(lambda _, row=i: self.delete_user(row))
+            self.userListWidget.setCellWidget(i, 2, delete_button)
+
+    def delete_user(self, row):
+        student_id = self.userListWidget.item(row, 1).text()
+        self.main_window.delete_user(student_id)
+        print(f"delete user with student ID: {student_id}")
+        # 삭제 완료 문구 알림창 뜨고 -> 알림창 확인 클릭시 show()호출
+        self.show()
+
+
+    def open_user_creat_page(self):
+        self.user_create_page = UserCreatePage(self.main_window)
+        self.main_window.setCentralWidget(self.user_create_page)
+        self.main_window.statusBar().showMessage('User Detail Page')

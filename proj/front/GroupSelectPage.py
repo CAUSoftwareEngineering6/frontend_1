@@ -1,11 +1,14 @@
 from PyQt5.QtWidgets import QApplication, QDesktopWidget, QWidget, QListWidget, QListWidgetItem, QVBoxLayout, QSpacerItem, QSizePolicy, QPushButton
-from GroupDetailPage import GroupDetailPage
 from LoginWindow import *
+from NoticePage import NoticePage
+from DebatePage import DebatePage
 
 class GroupSelectPage(QWidget):
-    def __init__(self, group, main_window):
+    def __init__(self, group, main_window, group_id, username):
         super().__init__()
         self.group = group
+        self.group_id = group_id
+        self.username = username
         self.main_window = main_window
         self.initUI()
 
@@ -30,11 +33,11 @@ class GroupSelectPage(QWidget):
         self.setLayout(layout)
 
     def go_to_notice(self):
-        self.notice_window = GroupDetailPage(self.group, self.main_window, 'notice')
+        self.notice_window = NoticePage(self.group, self.main_window, self.group_id, self.username)
         self.main_window.setCentralWidget(self.notice_window)
 
     def go_to_discussion(self):
-        self.discussion_window = GroupDetailPage(self.group, self.main_window, 'discussion')
+        self.discussion_window = DebatePage(self.group, self.main_window, self.group_id, self.username)
         self.main_window.setCentralWidget(self.discussion_window)
 
     def go_back(self):

@@ -1,9 +1,9 @@
-from .Debate import *
-from .Announcement import *
-from .Comment import *
-from .Group import *
-from .User import *
-from .StudentAndProfessor import *
+from .Debate import Debate
+from .Announcement import Announcement
+from .Comment import Comment
+from .Group import Group
+from .User import User
+from .StudentAndProfessor import Student, Professor
 from .MockDatabase import MockDatabase
 
 class Management:
@@ -16,7 +16,7 @@ class Management:
 
     def get_user(self, user_id):
         for user in self.database.users:
-            if user.student_id == user_id:
+            if user.get_id() == user_id:
                 return user
         return None
 
@@ -49,6 +49,7 @@ class Management:
     def get_user_by_id(self, personal_id: int):
         matched = []
         for user in self.database.users:
+            print("user id:", user.get_id(), "personal_id:", personal_id)
             if isinstance(user, Student) and user.student_id == personal_id:
                 matched.append(user)
             elif isinstance(user, Professor) and user.professor_id == personal_id:
@@ -71,7 +72,8 @@ class Management:
     def show_user_detail(self, current_user_id, user_id):
         current_user = self.get_user(current_user_id)
         user = self.get_user(user_id)
-        if not user or not current_user:
+        # if not user or not current_user:  -> 로직상 해당 값은 항상 있을 것 같아서 주석처리함
+        if not user:
             return None
         elif isinstance(current_user, Professor):
             if isinstance(user, Student):
@@ -98,14 +100,14 @@ class Management:
         if group_name is None and user_name is None:
             return_list = []
             for group in self.database.groups:
-                return_list.append({'group_id' : group.group_id, 'group_name' : group.group_name,'member_num' : len(group.members), 'accessible' : group.check_user_access(user_id)})
+                return_list.append({'group_id' : group.group_id, 'group_name' : group.group_name,'member_num' : len(group.members), 'accessible' : group.check_user_access(self.get_user_by_id(user_id))})
             return return_list
         elif group_name is not None:
             return_list = []
             for group in self.database.groups:
                 if group_name == group.group_name:
                     return_list.append({'group_id' : group.group_id, 'group_name': group.group_name, 'member_num': len(group.members),
-                                        'accessible': group.check_user_access(user_id)})
+                                        'accessible': group.check_user_access(self.get_user_by_id(user_id))})
                     break
             return return_list
         elif user_name is not None:
@@ -215,7 +217,7 @@ class Management:
         group = self.database.search_group(group_id)
         announcement = group.search_announcement(post_id)
         if group and announcement:
-            announcement.update_postname(postname, content)
+            announcement.update_content(postname, content)
             return True
         return False
 

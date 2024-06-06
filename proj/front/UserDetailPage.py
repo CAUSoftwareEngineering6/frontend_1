@@ -16,7 +16,7 @@ class UserDetailPage(QWidget):
         self.userDetailList = QListWidget()
 
         self.userDetailList.addItems(["user_id :" + user['user_id'],"user_name : "+user['username'],"student_id : "+user['student_id']])
-        if user['student_id'] == self.main_window.user_id:
+        if user['student_id'] == self.main_window.user_id or self.main_window.user_type == "professor":
             self.userDetailList.addItems(["grade : " + user['grade']])
 
         layout.addWidget(self.userDetailList)

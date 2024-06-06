@@ -1,8 +1,7 @@
-from .User import *
-from .Debate import *
-from .Announcement import *
-from .Post import *
-import datetime
+from .User import User
+from .Debate import Debate 
+from .Announcement import Announcement
+from .Post import Post
 from typing import List
 
 class Group:
@@ -49,15 +48,17 @@ class Group:
         self.members.remove(user)
 
     ## 수정부
-    def check_user_access(self, user_id):
+    def check_user_access(self, user):
+        if user[0].get_type() == "Professor":
+            return True
         for member in self.members:
-            if user_id == member.student_id:
+            if user[0].get_id() == member.get_id():
                 return True
         return False
 
     def search_menber(self, user_id):
         for member in self.members:
-                if user_id == member.user_id:
+                if user_id == member.get_id():
                     return member
         return False
 

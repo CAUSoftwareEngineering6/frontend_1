@@ -1,5 +1,5 @@
-from .Post import Post
 from .User import User
+from .Post import Post
 class Debate(Post):
     next_id = 1
 
