@@ -1,6 +1,4 @@
-from PyQt5.QtWidgets import QLineEdit, QTextEdit, QApplication, QDesktopWidget, QWidget, QLabel, QVBoxLayout, QSpacerItem, QSizePolicy, \
-    QPushButton, QListWidget, QListWidgetItem
-
+from PyQt5.QtWidgets import QWidget, QLineEdit, QLabel, QPushButton, QVBoxLayout, QMessageBox
 
 class UserCreatePage(QWidget):
     def __init__(self, main_window):
@@ -44,24 +42,28 @@ class UserCreatePage(QWidget):
         layout.addWidget(self.gender_input)
 
         self.create_button = QPushButton('Create')
-        self.go_back_button.clicked.connect(self.create_user)
+        self.create_button.clicked.connect(self.create_user)
         layout.addWidget(self.create_button)
 
         self.setLayout(layout)
+
     def create_user(self):
-        # 빈 필드에서 text추출하는 부분
-        self.main_window.create_user()
+        user_id = self.userid_input.text()
+        username = self.username_input.text()
+        password = self.password_input.text()
+        email = self.email_input.text()
+        gender = self.gender_input.text()
+        if not all([user_id, username, password, email, gender]):
+            QMessageBox.warning(self, 'Fail', '모든 정보를 기입해주세요!')
+        else :
+            self.main_window.create_user(user_id, username, password, email, gender)
+            QMessageBox.information(self, 'Success', '유저 생성이 완료되었습니다!')
+            self.userid_input.clear()
+            self.username_input.clear()
+            self.password_input.clear()
+            self.email_input.clear()
+            self.gender_input.clear()
         self.show()
 
     def go_back(self):
         self.main_window.go_back_to_user_list()
-
-    def create_user(self):
-        user_id = self.userid_label.text()
-        username = self.username_label.text()
-        password = self.password_label.text()
-        email = self.email_label.text()
-        gender = self.gender_label.text()
-        self.main_window.create_user(user_id, username, password, email, gender)
-        # 삭제 완료 문구 알림창 뜨고 -> 알림창 확인 클릭시 go_back()호출
-
