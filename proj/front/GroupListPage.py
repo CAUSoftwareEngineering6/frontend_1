@@ -1,7 +1,8 @@
 from PyQt5.QtWidgets import QApplication, QDesktopWidget, QWidget, QListWidget, QListWidgetItem, QVBoxLayout, \
-    QSpacerItem, QSizePolicy, QPushButton
+    QSpacerItem, QSizePolicy, QPushButton, QLineEdit, QHBoxLayout, QLabel, QGroupBox, QMessageBox
 from LoginWindow import *
-from GroupSelectPage import *
+from GroupSelectPage import GroupSelectPage
+from GroupCreatePage import GroupCreatePage
 
 
 class GroupListPage(QWidget):
@@ -17,11 +18,18 @@ class GroupListPage(QWidget):
         self.setGeometry(100, 100, 400, 500)
 
         self.layout = QVBoxLayout()
-
+        self.search_layout = QHBoxLayout()
         self.search_box = QLineEdit(self)
         self.search_box.setPlaceholderText("그룹 또는 사용자 검색")
         self.search_box.textChanged.connect(self.filter_groups)
-        self.layout.addWidget(self.search_box)
+        self.search_layout.addWidget(self.search_box)
+
+        self.add_button = QPushButton("+", self)
+        self.add_button.setFixedSize(30, 30)
+        self.add_button.clicked.connect(self.open_group_creat_page)
+        self.search_layout.addWidget(self.add_button)
+
+        self.layout.addLayout(self.search_layout)
 
         # 여기서 데이터 다 읽어오고, 나머지는 기존 코드 활용
         self.groups = self.main_window.get_all_group()
@@ -47,8 +55,7 @@ class GroupListPage(QWidget):
         label = QLabel(f"학생 {group['member_num']} 명")
         info_layout.addWidget(label)
 
-        # group_name -> member_name
-        if group['accessible'] == True:
+        if group['accessible']:
             visit_button = QPushButton('방문')
             visit_button.clicked.connect(lambda _, g=group: self.visit_group(g))
             info_layout.addWidget(visit_button)
@@ -58,8 +65,12 @@ class GroupListPage(QWidget):
             lock_button.clicked.connect(lambda _, g=group, gb=group_box: self.toggle_members(g, gb))
             info_layout.addWidget(lock_button)
 
+        delete_button = QPushButton('delete')
+        delete_button.clicked.connect(lambda _, g=group: self.confirm_delete_group(g))
+        info_layout.addWidget(delete_button)
+
         group_layout.addLayout(info_layout)
-        # group_name -> member_name
+
         members_label = QLabel("\n".join(group['group_name']))
         members_label.setVisible(False)
         group_layout.addWidget(members_label)
@@ -87,5 +98,19 @@ class GroupListPage(QWidget):
         self.main_window.statusBar().showMessage(group['group_name'] + ' Select Page')
         self.main_window.group_id = group['group_id']
 
+    def open_group_creat_page(self):
+        self.group_create_page = GroupCreatePage(self.main_window)
+        self.main_window.setCentralWidget(self.group_create_page)
+        self.main_window.statusBar().showMessage('Create Group Page')
+
     def go_back(self):
         self.main_window.go_back_to_origin()
+
+    def confirm_delete_group(self, group):
+        reply = QMessageBox.question(self, 'Confirmation', f"그룹 '{group['group_name']}'을(를) 삭제하시겠습니까?",
+                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            self.delete_group(group)
+
+    def delete_group(self, group):
+        pass
