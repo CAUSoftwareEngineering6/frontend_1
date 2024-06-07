@@ -23,11 +23,11 @@ class GroupListPage(QWidget):
         self.search_box.setPlaceholderText("그룹 또는 사용자 검색")
         self.search_box.textChanged.connect(self.filter_groups)
         self.search_layout.addWidget(self.search_box)
-
-        self.add_button = QPushButton("+", self)
-        self.add_button.setFixedSize(30, 30)
-        self.add_button.clicked.connect(self.open_group_creat_page)
-        self.search_layout.addWidget(self.add_button)
+        if self.main_window.user_type == "professor":
+            self.add_button = QPushButton("+", self)
+            self.add_button.setFixedSize(30, 30)
+            self.add_button.clicked.connect(self.open_group_creat_page)
+            self.search_layout.addWidget(self.add_button)
 
         self.layout.addLayout(self.search_layout)
 
@@ -64,10 +64,11 @@ class GroupListPage(QWidget):
             lock_button.setText('🔒')
             lock_button.clicked.connect(lambda _, g=group, gb=group_box: self.toggle_members(g, gb))
             info_layout.addWidget(lock_button)
-
-        delete_button = QPushButton('delete')
-        delete_button.clicked.connect(lambda _, g=group: self.confirm_delete_group(g))
-        info_layout.addWidget(delete_button)
+            
+        if self.main_window.user_type == "professor":
+            delete_button = QPushButton('delete')
+            delete_button.clicked.connect(lambda _, g=group: self.confirm_delete_group(g))
+            info_layout.addWidget(delete_button)
 
         group_layout.addLayout(info_layout)
 

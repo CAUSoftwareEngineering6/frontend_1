@@ -22,17 +22,22 @@ class UserListPage(QWidget):
         self.search_box.textChanged.connect(self.show)
         search_layout.addWidget(self.search_box)
 
+        
         # + 버튼 추가
-        self.add_button = QPushButton("+", self)
-        self.add_button.setFixedSize(30, 30)
-        self.add_button.clicked.connect(self.open_user_creat_page)
-        search_layout.addWidget(self.add_button)
+        if self.main_window.user_type == "professor":
+            self.add_button = QPushButton("+", self)
+            self.add_button.setFixedSize(30, 30)
+            self.add_button.clicked.connect(self.open_user_creat_page)
+            search_layout.addWidget(self.add_button)
 
         layout.addLayout(search_layout)
 
         # UserList 를 TableWidget으로 표현
         self.userListWidget = QTableWidget(self)
-        self.userListWidget.setColumnCount(3)
+        if self.main_window.user_type == "professor":
+            self.userListWidget.setColumnCount(3)
+        else:
+            self.userListWidget.setColumnCount(2)
         layout.addWidget(self.userListWidget)
 
         self.show()
@@ -71,8 +76,11 @@ class UserListPage(QWidget):
         # 기존 테이블 지우기
         self.userListWidget.clear()
 
+        if self.main_window.user_type == "professor":
         # 테이블 열 이름 지정
-        self.userListWidget.setHorizontalHeaderLabels(["name", "studentID", "delete"])
+            self.userListWidget.setHorizontalHeaderLabels(["name", "studentID", "delete"])
+        else:
+            self.userListWidget.setHorizontalHeaderLabels(["name", "studentID"])
 
         # 테이블 칸 너비 조절
         self.userListWidget.horizontalHeader().setStretchLastSection(True)
@@ -89,10 +97,10 @@ class UserListPage(QWidget):
             student_id = QTableWidgetItem(user['student_id'])
             self.userListWidget.setItem(i, 0, name)
             self.userListWidget.setItem(i, 1, student_id)
-
-            delete_button = QPushButton("DELETE")
-            delete_button.clicked.connect(lambda _, row=i: self.delete_user(row))
-            self.userListWidget.setCellWidget(i, 2, delete_button)
+            if self.main_window.user_type == "professor":
+                delete_button = QPushButton("DELETE")
+                delete_button.clicked.connect(lambda _, row=i: self.delete_user(row))
+                self.userListWidget.setCellWidget(i, 2, delete_button)
 
     def delete_user(self, row):
         student_id = self.userListWidget.item(row, 1).text()

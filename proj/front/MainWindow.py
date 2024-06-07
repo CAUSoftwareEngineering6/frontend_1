@@ -6,6 +6,8 @@ from Origin import *
 from GroupListPage import *
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from back.Management import Management
+from DebatePage import *
+from NoticeDetailPage import *
 
 
 class MainWindow(QMainWindow):
