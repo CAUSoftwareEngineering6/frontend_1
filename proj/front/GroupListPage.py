@@ -52,10 +52,10 @@ class GroupListPage(QWidget):
         group_layout = QVBoxLayout()
 
         info_layout = QHBoxLayout()
-        label = QLabel(f"학생 {group['member_num']} 명")
+        label = QLabel(f"학생 {group['member_count']} 명")
         info_layout.addWidget(label)
 
-        if group['accessible']:
+        if group['access']:
             visit_button = QPushButton('방문')
             visit_button.clicked.connect(lambda _, g=group: self.visit_group(g))
             info_layout.addWidget(visit_button)
@@ -72,7 +72,7 @@ class GroupListPage(QWidget):
 
         group_layout.addLayout(info_layout)
 
-        members_label = QLabel("\n".join(group['group_name']))
+        members_label = QLabel("\n".join(group['members']))
         members_label.setVisible(False)
         group_layout.addWidget(members_label)
 

@@ -127,16 +127,16 @@ class NoticeDetailPage(QWidget):
                     self.reply_list.setItemWidget(item, widget)
 
     def add_reply_item(self, text):
-        self.main_window.manager.create_announcement_comment(self.main_window.user_id, self.group_id, self.post_id, text)
+        self.main_window.manager.create_comment(self.main_window.user_id, self.post_id, text)
         self.load_replies()
 
     def delete_comment(self, post_id, comment_id):
-        self.main_window.manager.delete_announcement_comment(self.group_id, post_id, comment_id)
+        self.main_window.manager.delete_comment(comment_id)
         self.load_replies()
 
     def edit_comment(self, post_id, label, comment_id):
         current_text = label.text().split(' ', 1)[1]
         text, ok = QInputDialog.getText(self, '댓글 수정', '새로운 댓글을 입력하세요:', text=current_text)
         if ok and text:
-            self.main_window.manager.update_announcement_comment(self.group_id, post_id, comment_id, text)
+            self.main_window.manager.update_comment(comment_id, text)
             self.load_replies()

@@ -6,6 +6,7 @@ from Origin import *
 from GroupListPage import *
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from back.Management import Management
+from NoticePage import *
 from DebatePage import *
 from NoticeDetailPage import *
 
@@ -57,6 +58,24 @@ class MainWindow(QMainWindow):
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
+    
+    def do_login(self, username, password):
+        user = self.manager.login(username, password)
+        if user != None:
+            print("user:", user)
+            self.username = user['username']
+            if 'student_id' in user:
+                self.user_id = user['student_id']
+                self.user_tyep = "student"
+                self.group_id = self.manager.get_groups_by_personal_id(self.user_id)
+            else:
+                self.user_id = user['professor_id']
+                self.user_type = "professor"
+            self.name_bar.setText(self.username)
+            self.id_bar.setText(str(self.user_id))
+            return True
+
+        
 
     # ----------------뒤로 가기 버튼 관련 함수-------------------#
     def go_back_to_login(self):
@@ -110,6 +129,7 @@ class MainWindow(QMainWindow):
     #-----------데이터 읽어오는 함수------------#
     def get_all_user(self, option=None):
         all_user = self.manager.show_user(searching = option)
+        # 키추가해서 교수인지 학생인지
         only_students = [d for d in all_user if 'professor_id' not in d]
         return only_students
     
@@ -136,29 +156,7 @@ class MainWindow(QMainWindow):
         print(all_debate)
         return all_debate
     
-    
-    
-    # 이건 백엔드에게 요청
-    def set_login_user(self, login_id):
-        print("login_id", login_id)
-        users = self.get_all_user_with_professor()
-        for user in users:
-            if user['username'] == login_id: # user가 존재하면
-                if 'student_id' in user: # user가 학생이라면
-                    self.user_id = user['student_id']
-                    self.user_type = 'student'
-                    self.username = user['username']
-                    all_group = self.manager.show_group(self.user_id)
-                    for group in all_group:
-                        if group['accessible'] == True:
-                            self.group_id = group['group_id']
-                else:
-                    self.user_id = user['professor_id']
-                    self.user_type = 'professor'
-                    self.username = user['username']
-        print(self.username, self.user_id, self.user_type)
-        self.name_bar.setText(self.username)
-        self.id_bar.setText(self.user_id)
+        
 
     # ---- 유저 생성 및 삭제 ----- #
     def delete_user(self, student_id):

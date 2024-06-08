@@ -175,7 +175,7 @@ class NoticePage(QWidget):
         if dialog.exec_() == QDialog.Accepted:
             new_title, new_content = dialog.getInputs()
             if new_title and new_content:
-                self.main_window.manager.update_announcement(self.main_window.group_id, post_id, new_title, new_content)
+                self.main_window.manager.update_announcement(post_id, new_title, new_content)
                 self.show()
 
     def go_to_notice_detail(self, post_id):

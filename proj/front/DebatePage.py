@@ -56,7 +56,7 @@ class DebatePage(QWidget):
             QMessageBox.warning(self, 'Error', '토론 주제를 입력하세요.')
 
     def add_discussion_item(self, text):
-        self.main_window.manager.create_debate(self.main_window.user_id, self.main_window.group_id, text,self.main_window.user_type)
+        self.main_window.manager.create_debate(self.main_window.user_id, self.main_window.group_id, text)
         self.load_discussions()
 
     def load_discussions(self):
@@ -102,7 +102,7 @@ class DebatePage(QWidget):
         current_text = label.text().split(". ", 1)[1]
         text, ok = QInputDialog.getText(self, '토론 수정', '새로운 토론 주제를 입력하세요:', text=current_text)
         if ok and text:
-            self.main_window.manager.update_debate(self.main_window.group_id, post_id, text)
+            self.main_window.manager.update_debate(post_id, text)
             self.load_discussions()
 
     def delete_discussion(self, post_id):
